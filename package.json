@@ -1,11 +1,16 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "functions/**/*.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/functions/$1" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/$1" }
-  ]
+  "name": "stock-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "vercel dev",
+    "build": "echo \"no build step\""
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
 }
