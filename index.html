@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Controle de Estoque</title>
+  <style>
+    body{font-family:system-ui,Arial;margin:16px}
+    input,button{padding:6px;margin:4px}
+    table{border-collapse:collapse;width:100%;margin-top:12px}
+    th,td{border:1px solid #ddd;padding:8px;text-align:left}
+  </style>
+</head>
+<body>
+  <h1>Controle de Estoque</h1>
+  <div>
+    <input id="name" placeholder="Nome do item">
+    <input id="qty" placeholder="Quantidade" type="number">
+    <button id="add">Adicionar</button>
+  </div>
+  <div id="msg"></div>
+  <table>
+    <thead><tr><th>Nome</th><th>Qtd</th><th>Ações</th></tr></thead>
+    <tbody id="list"></tbody>
+  </table>
+
+<script>
+const base = '/.api';
+async function list(){
+  const res = await fetch(base+'/listItems');
+  const items = await res.json();
+  const tbody = document.getElementById('list');
+  tbody.innerHTML = '';
+  items.forEach(it=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${it.name}</td>
+      <td><input style="width:80px" data-id="${it.id}" class="qty" value="${it.qty}"></td>
+      <td>
+        <button data-id="${it.id}" class="save">Salvar</button>
+        <button data-id="${it.id}" class="del">Remover</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  attach();
+}
+function show(msg){ document.getElementById('msg').textContent = msg; setTimeout(()=>document.getElementById('msg').textContent=' ',3000); }
+
+function attach(){
+  document.querySelectorAll('.save').forEach(b=>{
+    b.onclick = async ()=> {
+      const id = b.getAttribute('data-id');
+      const qty = document.querySelector('input.qty[data-id="'+id+'"]').value;
+      const res = await fetch(base+'/updateItem', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id, qty})
+      });
+      if(res.ok){ show('Atualizado'); list(); } else show('Erro');
+    };
+  });
+  document.querySelectorAll('.del').forEach(b=>{
+    b.onclick = async ()=> {
+      const id = b.getAttribute('data-id');
+      const res = await fetch(base+'/deleteItem', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id})
+      });
+      if(res.ok){ show('Removido'); list(); } else show('Erro');
+    };
+  });
+}
+
+document.getElementById('add').onclick = async ()=>{
+  const name = document.getElementById('name').value;
+  const qty = document.getElementById('qty').value || 0;
+  const res = await fetch(base+'/createItem', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name, qty})
+  });
+  if(res.ok){ document.getElementById('name').value=''; document.getElementById('qty').value=''; list(); show('Adicionado'); }
+  else show('Erro');
+};
+
+list();
+</script>
+</body>
+</html>
