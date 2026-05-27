@@ -24,7 +24,7 @@
   </table>
 
 <script>
-const base = '/.api';
+const base = '/api';
 async function list(){
   const res = await fetch(base+'/listItems');
   const items = await res.json();
