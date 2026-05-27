@@ -1,0 +1,16 @@
+{
+  "name": "stock-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "vercel dev",
+    "build": "echo \"no build step\""
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
